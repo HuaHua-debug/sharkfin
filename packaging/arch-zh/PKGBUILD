@@ -4,7 +4,7 @@
 pkgname=sharkfin-keyboard-zh
 _pkgname=sharkfin
 pkgver=0.11.1
-pkgrel=1
+pkgrel=2
 pkgdesc='Configurator for Attack Shark and other ROYUAN keyboards (with Traditional Chinese UI)'
 arch=('x86_64')
 url='https://github.com/HuaHua-debug/sharkfin'
@@ -35,7 +35,9 @@ build() {
   export CARGO_HOME="$srcdir/cargo-home"
   export RUSTUP_TOOLCHAIN=stable
   export CARGO_TARGET_DIR=target
-  cargo build --frozen --release
+  # Without tauri/custom-protocol the binary loads devUrl (localhost:1420)
+  # instead of the embedded frontend; `tauri build` passes it for you.
+  cargo build --frozen --release --features tauri/custom-protocol
 }
 
 package() {
