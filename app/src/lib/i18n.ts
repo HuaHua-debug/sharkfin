@@ -7,13 +7,15 @@
 // reactivity through every string.
 import id from "./locales/id.json";
 import pt from "./locales/pt.json";
+import zh from "./locales/zh.json";
 
-const CATALOGS: Record<string, Record<string, string>> = { id, pt };
+const CATALOGS: Record<string, Record<string, string>> = { id, pt, zh };
 
 export const LOCALES = [
   ["en", "English"],
   ["id", "Bahasa Indonesia"],
   ["pt", "Português (Brasil)"],
+  ["zh", "繁體中文"],
 ] as const;
 
 function pick(): string {
