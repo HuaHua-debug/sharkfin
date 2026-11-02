@@ -1,0 +1,59 @@
+# Maintainer: HuaHua-debug
+# Builds sharkfin 0.11.1 from this fork, with the Traditional Chinese (zh) UI
+# translation added. Adapted from the AUR package sharkfin-keyboard.
+pkgname=sharkfin-keyboard-zh
+_pkgname=sharkfin
+pkgver=0.11.1
+pkgrel=1
+pkgdesc='Configurator for Attack Shark and other ROYUAN keyboards (with Traditional Chinese UI)'
+arch=('x86_64')
+url='https://github.com/HuaHua-debug/sharkfin'
+license=('GPL-3.0-or-later')
+depends=('cairo' 'dbus' 'gdk-pixbuf2' 'glib2' 'glibc' 'gtk3' 'hicolor-icon-theme' 'libgcc'
+         'libsoup3' 'systemd-libs' 'webkit2gtk-4.1')
+makedepends=('cargo' 'git' 'npm')
+provides=('sharkfin-keyboard')
+conflicts=('sharkfin' 'sharkfin-keyboard' 'sharkfin-keyboard-bin')
+# The hidapi crate compiles vendored C; makepkg's LTO makes ld drop its symbols.
+options=('!lto' '!debug')
+source=("$_pkgname::git+$url.git#commit=3107c04f7111a4b160c4d1af195dc78593b11b24")
+b2sums=('SKIP')
+
+prepare() {
+  cd "$_pkgname/app"
+  npm ci --cache "$srcdir/npm-cache"
+  cd src-tauri
+  export RUSTUP_TOOLCHAIN=stable
+  cargo fetch --locked --target "$(rustc -vV | sed -n 's/^host: //p')"
+}
+
+build() {
+  cd "$_pkgname/app"
+  npm run build
+  cd src-tauri
+  export RUSTUP_TOOLCHAIN=stable
+  export CARGO_TARGET_DIR=target
+  cargo build --frozen --release
+}
+
+package() {
+  cd "$_pkgname"
+  install -Dm0755 "app/src-tauri/target/release/$_pkgname" -t "$pkgdir/usr/bin/"
+  install -Dm0644 "packaging/$_pkgname.desktop" -t "$pkgdir/usr/share/applications/"
+  install -Dm0644 packaging/com.getsharkfin.sharkfin.metainfo.xml \
+    "$pkgdir/usr/share/metainfo/com.getsharkfin.sharkfin.metainfo.xml"
+  install -Dm0644 packaging/com.getsharkfin.sharkfin.metainfo.xml \
+    "$pkgdir/usr/share/metainfo/com.getsharkfin.sharkfin.appdata.xml"
+  install -Dm0644 "packaging/70-$_pkgname.rules" -t "$pkgdir/usr/lib/udev/rules.d/"
+  install -Dm0644 'LICENSE' -t "$pkgdir/usr/share/licenses/$pkgname/"
+  install -Dm0644 'THIRD-PARTY-NOTICES.md' -t "$pkgdir/usr/share/licenses/$pkgname/"
+  local _size
+  for _size in 32 128; do
+    install -Dm0644 "app/src-tauri/icons/${_size}x${_size}.png" \
+      "$pkgdir/usr/share/icons/hicolor/${_size}x${_size}/apps/$_pkgname.png"
+  done
+  install -Dm0644 'app/src-tauri/icons/128x128@2x.png' \
+    "$pkgdir/usr/share/icons/hicolor/256x256/apps/$_pkgname.png"
+  install -Dm0644 'app/src-tauri/icons/icon.png' \
+    "$pkgdir/usr/share/icons/hicolor/512x512/apps/$_pkgname.png"
+}
