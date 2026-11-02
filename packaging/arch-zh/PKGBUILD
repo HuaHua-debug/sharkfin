@@ -23,6 +23,7 @@ prepare() {
   cd "$_pkgname/app"
   npm ci --cache "$srcdir/npm-cache"
   cd src-tauri
+  export CARGO_HOME="$srcdir/cargo-home"
   export RUSTUP_TOOLCHAIN=stable
   cargo fetch --locked --target "$(rustc -vV | sed -n 's/^host: //p')"
 }
@@ -31,6 +32,7 @@ build() {
   cd "$_pkgname/app"
   npm run build
   cd src-tauri
+  export CARGO_HOME="$srcdir/cargo-home"
   export RUSTUP_TOOLCHAIN=stable
   export CARGO_TARGET_DIR=target
   cargo build --frozen --release
