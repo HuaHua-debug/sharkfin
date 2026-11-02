@@ -1,11 +1,11 @@
 # Maintainer: HuaHua-debug
-# Builds sharkfin 0.11.1 from this fork, with the Traditional Chinese (zh) UI
-# translation added. Adapted from the AUR package sharkfin-keyboard.
+# Builds sharkfin 0.11.1 from this fork, with Chinese (zh-CN / zh-SG / zh-TW) UI
+# translations added. Adapted from the AUR package sharkfin-keyboard.
 pkgname=sharkfin-keyboard-zh
 _pkgname=sharkfin
 pkgver=0.11.1
-pkgrel=2
-pkgdesc='Configurator for Attack Shark and other ROYUAN keyboards (with Traditional Chinese UI)'
+pkgrel=3
+pkgdesc='Configurator for Attack Shark and other ROYUAN keyboards (with Chinese UI)'
 arch=('x86_64')
 url='https://github.com/HuaHua-debug/sharkfin'
 license=('GPL-3.0-or-later')
@@ -16,7 +16,7 @@ provides=('sharkfin-keyboard')
 conflicts=('sharkfin' 'sharkfin-keyboard' 'sharkfin-keyboard-bin')
 # The hidapi crate compiles vendored C; makepkg's LTO makes ld drop its symbols.
 options=('!lto' '!debug')
-source=("$_pkgname::git+$url.git#commit=3107c04f7111a4b160c4d1af195dc78593b11b24")
+source=("$_pkgname::git+$url.git#commit=680082d89c6508a8a9eed950f2a0573dd3324e9e")
 b2sums=('SKIP')
 
 prepare() {
